@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "dbio": {
+      "url": "${DBIO_MCP_URL:-https://mcp.dbio.ai/mcp}",
+      "transport": "http",
+      "headers": {
+        "Authorization": "Bearer ${DBIO_API_KEY}"
+      }
+    }
+  }
+}
