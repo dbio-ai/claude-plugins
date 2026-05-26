@@ -101,6 +101,14 @@ Trigger `landing-cta` if user wants conversion optimization.
 Trigger `theme-customize` for visual styling.
 Trigger `publish-deploy` for custom domain.
 
+## Editing an EXISTING page?
+
+→ Use `page-edit` skill instead. This skill is for designing NEW pages from scratch.
+
+## Something broken?
+
+→ Use `fix-issues` skill for diagnostics (page not visible, broken images, CSS issues).
+
 ## Don't
 
 - ❌ Don't add `products` section to a bio link (use ecom-setup for that)

@@ -65,9 +65,10 @@ Skills auto-activate based on context — no command needed.
 
 ## Commands
 
+### Create
 | Command | Purpose |
 |---|---|
-| `/dbio:find-template <description>` | Find a template by use case (semantic) |
+| `/dbio:find-template <description>` | Find a template by use case |
 | `/dbio:new-store [name]` | Create blank store (interactive) |
 | `/dbio:new-shop [name]` | Create ecommerce store |
 | `/dbio:new-landing [name]` | Create landing page |
@@ -75,6 +76,16 @@ Skills auto-activate based on context — no command needed.
 | `/dbio:new-wiki [name]` | Create wiki/docs site |
 | `/dbio:new-bio [name]` | Add a page to active store |
 | `/dbio:ecom-add-product <desc>` | Create a product with AI image |
+
+### Edit & Fix
+| Command | Purpose |
+|---|---|
+| `/dbio:edit-page <description>` | Edit a page (change text, swap image, reorder) |
+| `/dbio:fix <issue>` | Diagnose and fix issues (broken page, CSS, domain, etc.) |
+
+### Manage
+| Command | Purpose |
+|---|---|
 | `/dbio:publish` | Publish active store, show URL |
 | `/dbio:whoami` | Show session, platform, quota |
 
@@ -86,13 +97,15 @@ Skills auto-activate based on context — no command needed.
 - `content-write` — context-aware copy (industry, locale)
 - `theme-customize` — colors, typography, design tokens
 - `publish-deploy` — publish + custom domain + DNS verify
+- `page-edit` — modify existing pages/sections (text, image, reorder, delete, restore)
+- `fix-issues` — diagnose & fix common problems (CSS, broken images, 404, domain)
 
 ### Vertical-specific
 - `bio-design` — bio link / personal landing
 - `landing-cta` — landing page conversion optimization
 - `ecom-setup` — full e-commerce setup
 - `ecom-product` — add products with images/variants
-- `ecom-checkout` — coupons, payment, order management
+- `ecom-checkout` — coupons, payment, order info (mostly dashboard)
 - `blog-setup` — blog/news site structure
 - `blog-write` — SEO-optimized post drafting
 - `wiki-structure` — hierarchical docs/KB
