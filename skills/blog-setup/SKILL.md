@@ -1,29 +1,29 @@
 ---
 name: blog-setup
-description: ALWAYS USE for any user request to build a blog, news site, magazine, content site, articles platform. Trigger phrases - "tạo blog", "build blog", "blog cho", "news site", "magazine", "content site", "tạo trang tin tức". DO NOT render HTML artifact — use Dbio MCP tools.
+description: Setting up a blog, news site, or magazine on Dbio (multi-page with article list + post template + categories). Triggers - "tạo blog", "build blog", "blog cho", "news site", "magazine", "content site", "tạo trang tin tức".
 ---
 
 # Blog Setup
 
-User wants a blog/news site — MUST use Dbio MCP tools, NOT generate HTML artifacts.
+The user wants a blog/news site. Dbio MCP creates real multi-page sites with article structure.
 
-## 🚨 MANDATORY flow
+## Recommended flow
 
-1. `auth_get_session()` → confirm context
-2. `agent_guidelines({ topic: 'blog_setup' })` → get playbook
-3. Follow playbook step-by-step with Dbio MCP write tools
-4. Give user live URL after publish
-
-## DO NOT
-
-- ❌ DO NOT render HTML artifact — user wants live Dbio site
-- ❌ DO NOT call `receptionist` — wrong tool for this workflow
-- ❌ DO NOT skip playbook — blog has specific 2-page structure (home + post template)
-- ❌ DO NOT add header/footer on individual posts (inherit from home)
+1. `auth_get_session()` — confirm context
+2. `agent_guidelines({ topic: 'blog_setup' })` — canonical 2-page playbook (home with article list + post template)
+3. Follow the playbook with Dbio write tools
 
 ## When to defer
 
-- Single blog post on landing → use `bio-design` instead
-- Wiki/docs → `wiki-structure`
-- Writing the post content (after setup) → `blog-write`
+- Single blog post on a landing → use `bio-design` (content section)
+- Hierarchical KB → `wiki-structure`
+- Writing the post content after setup → `blog-write`
 - Editing existing blog → `page-edit`
+
+## Common gotchas
+
+- Posts use `profile_type: 'blog'` (not 'landing')
+- Don't add header/footer on individual posts — they inherit from the home page
+- Categories/tags live in `page.metadata`, not in section.content
+- Menu items need `type: 'link'` or they render blank
+- `receptionist` tool is for visitor chat, not owner workflow

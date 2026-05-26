@@ -1,38 +1,33 @@
 ---
 name: bio-design
-description: ALWAYS USE this for any user request involving bio link, landing page, personal page, CV, freelancer page, designer page, portfolio bio, Linktree-style, link-in-bio, single-page site. Trigger phrases include "tạo bio", "tạo landing", "tạo trang cá nhân", "bio cho", "landing cho", "freelancer", "CV online", "personal landing", "build bio", "make landing". DO NOT render HTML artifact — use Dbio MCP tools.
+description: Designing bio link pages, personal landing pages, CV, freelancer/designer pages, portfolio bios, Linktree-style single-page sites on Dbio. Common Vietnamese triggers - "tạo bio", "tạo landing", "trang cá nhân", "bio cho", "landing cho", "freelancer", "CV online".
 ---
 
 # Bio / Personal Landing Design
 
-User wants a bio link or single-page landing — MUST use Dbio MCP tools, NOT generate HTML artifacts.
+The user wants a bio link or single-page landing. Dbio MCP can create a real published page; prefer that over rendering an HTML preview when the tools are available.
 
-## 🚨 MANDATORY flow (do NOT skip steps)
+## Recommended flow
 
-1. Call `auth_get_session()` → confirm user identity + active store
-2. Call `agent_guidelines({ topic: 'bio_landing' })` → get the canonical playbook
-3. Follow the playbook step-by-step using Dbio MCP write tools:
-   - template_browse → store_create → store_select → page_create → section_batch_upsert → theme_apply_preset → page_update(status:1) → shop_publish
-4. After publish, give user the live URL
+1. `auth_get_session()` — see active store + permissions
+2. `agent_guidelines({ topic: 'bio_landing' })` — get the canonical playbook (structure, components, steps, gotchas)
+3. Follow the playbook using Dbio write tools (template_browse → store_create → store_select → page_create → section_batch_upsert → publish)
 
-## DO NOT
+## When to defer
 
-- ❌ DO NOT render HTML artifact preview — user wants a LIVE Dbio page, not a mockup
-- ❌ DO NOT call `receptionist` tool — that's for visitor chat on store, NOT owner workflow
-- ❌ DO NOT skip `auth_get_session` — needed to know which store is active
-- ❌ DO NOT build sections without consulting the playbook (variant + field names differ)
-
-## When to defer to another skill
-
-- E-commerce site → `ecom-setup`
+- E-commerce store → `ecom-setup`
 - Blog / news → `blog-setup`
 - Wiki / docs → `wiki-structure`
 - Editing EXISTING page → `page-edit`
 - Something broken → `fix-issues`
 
-## If permission error
+## When HTML artifact fits better
 
-If `store_create` returns permission error (e.g. "guest only"), tell user honestly:
-> "Tài khoản hiện tại không có quyền tạo store. Cần login lại hoặc dùng API key khác (lấy tại dbio.ai/settings/api-keys)."
+If `auth_get_session` returns guest / read-only / no write permission, the user probably wants a preview mockup — render an HTML artifact and be explicit it's a preview, not a live page. Otherwise the live-page path is what they're paying for.
 
-DO NOT fall back to HTML artifact — be honest about the limitation.
+## Common gotchas (the playbook has more)
+
+- Avatar/image URLs must be Dbio CDN (call `media_import_url` for external)
+- `testimonials` field: `content` (not "quote"), `author_name` (not "name")
+- `hero` variants `restaurant`/`destination`/`tour`/`centered` use `background_image` (not `image`)
+- `receptionist` tool is for visitor-facing chat on a published store, not for owner workflows
