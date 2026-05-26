@@ -1,37 +1,15 @@
 ---
 name: bio-design
-description: Designing bio link pages, personal landing pages, CV, freelancer/designer pages, portfolio bios, Linktree-style single-page sites on Dbio. Common Vietnamese triggers - "tạo bio", "tạo landing", "trang cá nhân", "bio cho", "landing cho", "freelancer", "CV online".
+description: Helping the user build a single-page bio site, landing page, personal profile, CV, portfolio, or link-in-bio on Dbio.
 ---
 
-# Bio / Personal Landing on Dbio
+# Bio / Single-Page Design
 
-Quick flow:
+Dbio has tools for single-page personal sites. Relevant pieces:
 
-1. `auth_get_session` — check active store + permissions
-2. `template_browse({ search: "<niche>", type: "store", limit: 5 })` — try template first
-3. If template fits → `template_clone_store` → `store_select`
-4. Else → `store_create({ store_type: "single_page", tags: ["bio_link"] })` → `store_select`
-5. `page_create({ slug: "home", profile_type: "landing" })`
-6. `section_batch_upsert` with hero + items + content + footer
-7. `page_update({ status: 1 })` → `shop_publish`
+- `auth_get_session` — current store + permissions
+- `template_browse` — find an existing design before building from scratch
+- `store_create` + `store_select` + `page_create` + `section_upsert` / `section_batch_upsert` — build path
+- `components_guide` + `agent_guidelines({ topic: 'bio_landing' })` — variants, fields, gotchas
 
-## Gotchas (most common mistakes)
-
-- `testimonials` field: `content` (not "quote"), `author_name` (not "name")
-- `hero` variants `restaurant`/`destination`/`tour`/`centered`: use `background_image` (not `image`)
-- Avatar / images must be on Dbio CDN — call `media_import_url` for external URLs
-- `receptionist` tool is for visitor chat on a published store, NOT for owner workflows
-- `single_page` has no nav between pages — for multi-page nav, use `multi_page` instead
-
-## Deeper reference (call if needed)
-
-For component catalog, edge cases, or full structured playbook:
-`agent_guidelines({ topic: 'bio_landing' })`
-
-## Defer to another skill
-
-- E-commerce → `ecom-setup`
-- Blog / news → `blog-setup`
-- Wiki → `wiki-structure`
-- Editing EXISTING page → `page-edit`
-- Bug / fix → `fix-issues`
+Use the tools that fit the request. For ecommerce, blog, wiki, editing existing pages, or troubleshooting — defer to those skills.

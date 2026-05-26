@@ -1,36 +1,16 @@
 ---
 name: blog-setup
-description: Setting up a blog, news site, or magazine on Dbio (multi-page with article list + post template + categories). Triggers - "tạo blog", "build blog", "blog cho", "news site", "magazine", "content site", "tạo trang tin tức".
+description: Helping the user set up a blog, news site, magazine, or content site on Dbio.
 ---
 
-# Blog Setup on Dbio
+# Blog / Content Site Setup
 
-Quick flow (2-page structure: home + post template):
+Dbio supports multi-page sites with an article list + post template. Relevant pieces:
 
-1. `auth_get_session` — confirm context
-2. `template_browse({ search: "<niche>", type: "store", industry: "blog" })` — try template first
-3. If template fits → `template_clone_store` → `store_select`
-4. Else → `store_create({ store_type: "multi_page", tags: ["blog"] })` → `store_select`
-5. `page_create({ slug: "home", profile_type: "landing" })` — list page with `items` (article-grid section)
-6. `page_create({ slug: "first-post", profile_type: "blog" })` — post template
-7. `store_update({ settings: { menu: [...] } })` — nav (items need `type: "link"`)
-8. `page_publish` both → `shop_publish`
+- `auth_get_session`, `template_browse`
+- `store_create` (`store_type: "multi_page"`) + `store_select`
+- `page_create` for the home (list) page and individual posts
+- `section_upsert` / `section_batch_upsert` for the page content
+- `agent_guidelines({ topic: 'blog_setup' })` for the structure + fields + gotchas
 
-## Gotchas
-
-- Posts use `profile_type: 'blog'` (not 'landing')
-- Don't add header/footer on individual posts — inherited from home
-- Categories/tags live in `page.metadata`, not in section.content
-- Menu items missing `type: "link"` render blank
-- `receptionist` tool is for visitor chat, not owner workflow
-
-## Deeper reference
-
-`agent_guidelines({ topic: 'blog_setup' })` for component catalog, SEO fields, scheduling, newsletter integration.
-
-## Defer
-
-- Single blog post on landing → use `bio-design` instead
-- Hierarchical KB → `wiki-structure`
-- Writing post content → `blog-write`
-- Editing existing blog → `page-edit`
+For wiki/docs use `wiki-structure`. For editing existing posts use `page-edit`. For writing post content use `blog-write`.
