@@ -3,24 +3,32 @@ name: product-detail-page
 description: Building a custom detail page for ONE product on a Dbio ecomm store (gallery + variant picker + buy CTA + related products). Triggers - "trang chi tiết sản phẩm", "product detail page", "trang sản phẩm X", "custom layout cho sản phẩm", "page riêng cho product".
 ---
 
-# Product Detail Page
+# Product Detail Page on Dbio
 
-The user wants a custom-layout detail page for ONE product. Dbio provides a `<dbio-product-detail>` web component so you don't reimplement gallery/variant/buy logic.
+Dbio has a `<dbio-product-detail>` web component — drop it in `template_html` and the backend wires title/price/gallery/variant/buy. Don't reimplement.
 
-## Recommended flow
+Quick flow:
 
-1. `auth_get_session()` — confirm active store is ecomm
-2. `agent_guidelines({ topic: 'product_detail_page' })` — canonical playbook (component usage, wire-up, gotchas)
-3. Follow the playbook (product_get → page_create with metadata.product_id → section_upsert with `<dbio-product-detail>` → publish)
+1. `auth_get_session` — confirm active store is `ecomm` or `multi_page`
+2. `product_get({ id: X })` — verify product + grab category_slug
+3. `page_create({ profile_type: "product", global_code: product.slug, metadata: { product_id: X } })`
+4. `section_upsert({ section_type: "content", variant: "custom", content: { template_html: "<dbio-product-detail product_id=\"{{product_id}}\" /> ..." } })`
+5. `page_publish`
 
-## When to defer
+URL becomes `{{platform}}/p/{{product.slug}}`.
 
-- Multiple products grid → playbook `product_listing_page`
-- Adding a NEW product (not building its page) → `ecom-product`
+## Gotchas
+
+- `product_id` lives in `page.metadata`, NOT in section.content
+- `<dbio-product-detail>` is monolithic — heavy custom layout needs `product_listing_page` pattern instead
+- Won't work on `single_page` stores (no `/p/` route)
+
+## Deeper reference
+
+`agent_guidelines({ topic: 'product_detail_page' })` for full component attributes, related-products patterns, and edge cases.
+
+## Defer
+
+- Multi-product grid (catalog) → `agent_guidelines({ topic: 'product_listing_page' })`
+- Adding a NEW product → `ecom-product`
 - Default storefront /p/<slug> is already fine → no custom page needed
-
-## Common gotchas
-
-- `product_id` lives in `page.metadata`, not in section.content
-- `<dbio-product-detail>` handles gallery/price/variant — don't rebuild that layout
-- Only works on `multi_page` or `ecomm` stores (single_page has no /p/ route)

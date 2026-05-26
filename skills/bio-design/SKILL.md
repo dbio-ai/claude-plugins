@@ -3,31 +3,35 @@ name: bio-design
 description: Designing bio link pages, personal landing pages, CV, freelancer/designer pages, portfolio bios, Linktree-style single-page sites on Dbio. Common Vietnamese triggers - "tạo bio", "tạo landing", "trang cá nhân", "bio cho", "landing cho", "freelancer", "CV online".
 ---
 
-# Bio / Personal Landing Design
+# Bio / Personal Landing on Dbio
 
-The user wants a bio link or single-page landing. Dbio MCP can create a real published page; prefer that over rendering an HTML preview when the tools are available.
+Quick flow:
 
-## Recommended flow
+1. `auth_get_session` — check active store + permissions
+2. `template_browse({ search: "<niche>", type: "store", limit: 5 })` — try template first
+3. If template fits → `template_clone_store` → `store_select`
+4. Else → `store_create({ store_type: "single_page", tags: ["bio_link"] })` → `store_select`
+5. `page_create({ slug: "home", profile_type: "landing" })`
+6. `section_batch_upsert` with hero + items + content + footer
+7. `page_update({ status: 1 })` → `shop_publish`
 
-1. `auth_get_session()` — see active store + permissions
-2. `agent_guidelines({ topic: 'bio_landing' })` — get the canonical playbook (structure, components, steps, gotchas)
-3. Follow the playbook using Dbio write tools (template_browse → store_create → store_select → page_create → section_batch_upsert → publish)
+## Gotchas (most common mistakes)
 
-## When to defer
-
-- E-commerce store → `ecom-setup`
-- Blog / news → `blog-setup`
-- Wiki / docs → `wiki-structure`
-- Editing EXISTING page → `page-edit`
-- Something broken → `fix-issues`
-
-## When HTML artifact fits better
-
-If `auth_get_session` returns guest / read-only / no write permission, the user probably wants a preview mockup — render an HTML artifact and be explicit it's a preview, not a live page. Otherwise the live-page path is what they're paying for.
-
-## Common gotchas (the playbook has more)
-
-- Avatar/image URLs must be Dbio CDN (call `media_import_url` for external)
 - `testimonials` field: `content` (not "quote"), `author_name` (not "name")
-- `hero` variants `restaurant`/`destination`/`tour`/`centered` use `background_image` (not `image`)
-- `receptionist` tool is for visitor-facing chat on a published store, not for owner workflows
+- `hero` variants `restaurant`/`destination`/`tour`/`centered`: use `background_image` (not `image`)
+- Avatar / images must be on Dbio CDN — call `media_import_url` for external URLs
+- `receptionist` tool is for visitor chat on a published store, NOT for owner workflows
+- `single_page` has no nav between pages — for multi-page nav, use `multi_page` instead
+
+## Deeper reference (call if needed)
+
+For component catalog, edge cases, or full structured playbook:
+`agent_guidelines({ topic: 'bio_landing' })`
+
+## Defer to another skill
+
+- E-commerce → `ecom-setup`
+- Blog / news → `blog-setup`
+- Wiki → `wiki-structure`
+- Editing EXISTING page → `page-edit`
+- Bug / fix → `fix-issues`
