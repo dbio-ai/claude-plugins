@@ -1,31 +1,31 @@
 ---
-description: Create a new Dbio store (single_page, multi_page, wiki, or ecomm). Use when user wants to start a new website, bio page, online shop, or knowledge base on Dbio.
+description: Create a new Dbio store from scratch (single_page, multi_page, wiki, or ecomm). Use ONLY when template_search returned no matches OR user explicitly says "build from scratch / no template". For any other case, try template_search first.
 ---
 
-# Create a Dbio Store
+# Create a Dbio Store (from scratch)
 
-Use this skill when the user wants to start a new site, store, or bio page.
+Use only after `template-search` returned no matches, or when user explicitly opts out of templates.
 
 ## Store types (pick one)
 
-| Type | Use for |
-|---|---|
-| `single_page` | Bio link, landing page, CV, event promo, business card |
-| `multi_page` | Multi-page site with menu: blog, news, portfolio, catalog |
-| `wiki` | Docs, knowledge base, help center, manual |
-| `ecomm` | Full online shop with cart + checkout: shop, food, service, travel, course |
+| Type | Use for | Next skill |
+|---|---|---|
+| `single_page` | Bio link, landing page, CV, business card | `bio-design` |
+| `multi_page` | Multi-page site: portfolio, catalog, corporate | `bio-design` then add pages |
+| `wiki` | Docs, knowledge base, help center | `wiki-structure` |
+| `ecomm` | Online shop with cart + checkout | `ecom-setup` |
 
-If unsure, ask. Default for "bio link" or "landing" = `single_page`. Default for "shop" or "online store" = `ecomm`.
+If unsure, ask. Default for "bio link" / "landing" = `single_page`. Default for "shop" / "online store" = `ecomm`. Default for "blog" / "news" = `multi_page` + `tags: ["blog"]`. Default for "docs" / "wiki" = `wiki`.
 
 ## Flow
 
 1. **Gather inputs** — ask for missing pieces:
    - `name` — store display name (e.g. "Cafe Mekong")
    - `store_type` — from table above
-   - `global_code` — subdomain (auto-suggest from name, kebab-case)
+   - `global_code` — subdomain (auto-suggest kebab-case from name)
    - `currency` — default from user's platform (USD for dbio.ai, VND for dbio.vn). Override if user specifies.
    - `lang` — default from user's locale (en/vi)
-   - `tags` — optional. E.g. `["food"]`, `["fashion"]`, `["docs"]`. First tag = primary subtype.
+   - `tags` — optional. E.g. `["food"]`, `["fashion"]`, `["docs"]`, `["blog"]`. First tag = primary subtype hint.
 
 2. **Create store**:
    ```
@@ -35,25 +35,21 @@ If unsure, ask. Default for "bio link" or "landing" = `single_page`. Default for
    })
    ```
 
-3. **Activate the new store** — REQUIRED before next steps:
+3. **Activate** — REQUIRED before next steps:
    ```
    store_select({ store_id: <new_id> })
    ```
 
-4. **Suggest next step** based on type:
-   - `single_page` → trigger `bio-design` skill
-   - `multi_page` → trigger `bio-design` for landing, then add more pages
-   - `wiki` → create hierarchical pages
-   - `ecomm` → trigger `ecommerce-setup` skill
+4. **Trigger next skill** based on type (see table above).
 
 ## Naming rules
 
 - `global_code` must be kebab-case, 3-30 chars, alphanumeric + hyphens.
-- Use `template_browse({ store_type, tag })` first to suggest a clonable template — faster than building from scratch.
 - Template codes starting with `tpl-` are official templates.
 
 ## Common pitfalls
 
 - ❌ Don't use legacy types (`bio`, `bio_store`, `shop`). Use the 4 canonical types above.
-- ❌ Don't forget `store_select` — subsequent tool calls will fail without active store context.
-- ❌ Don't hardcode currency or domain — read from user/platform context.
+- ❌ Don't forget `store_select` — subsequent tool calls fail without active store context.
+- ❌ Don't hardcode currency or domain — read from user/platform context via `auth_get_session`.
+- ❌ Don't skip `template-search` — always try templates first unless user opts out.

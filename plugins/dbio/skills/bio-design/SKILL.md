@@ -1,88 +1,109 @@
 ---
-description: Design and edit bio pages, landing pages, and content pages on Dbio. Use when user wants to build a bio link, single-page site, landing page, or edit any page sections.
+description: Design bio link pages and personal landing pages on Dbio (single_page type — link-in-bio, CV, profile, business card). For ecommerce/blog/wiki/event use the vertical-specific skill instead.
 ---
 
-# Bio Page Design
+# Bio / Personal Landing Page Design
 
-Use this skill when designing or editing any page on a Dbio store. Works for single_page, multi_page, and ecomm landing pages.
+Use when user wants to build a **bio link** or **personal landing page** on a `single_page` store. For other use cases, use the vertical-specific skill:
+
+- E-commerce store → `ecom-setup`
+- Blog / news → `blog-setup`
+- Wiki / docs → `wiki-structure`
+- Event landing → `landing-cta` + event template
+- Multi-page site → `template-search` first, then specific verticals
 
 ## Prerequisites
 
-User must have a store active (`store_select` already called). If not, trigger `store-create` skill first.
+- Active store with `store_type: single_page` (or `multi_page` if user wants nav)
+- `store_select` called
 
-## Step 1: Pick template or start fresh
+## Standard bio link / landing sections
 
-```
-template_browse({ store_type, tag: "food" })  // industry tag optional
-```
+For a typical personal bio or solo creator landing:
 
-If a relevant template exists → suggest `template_clone_bio({ source_code, slug: "home" })`.
+1. `header` (optional on single_page — only if has nav)
+2. `hero` variant `minimal` or `split` (name + tagline + CTA)
+3. `items` variant `link-grid` (key links: portfolio, social, contact)
+4. `gallery` variant `masonry` (visual showcase if creator/artist)
+5. `content` variant `story` (short about, 2-3 paragraphs)
+6. `testimonials` variant `cards` (social proof, 3-5 quotes)
+7. `cta` variant `floating` (sticky contact/follow CTA)
+8. `footer` (social links, copyright)
 
-Else create blank:
-```
-bio_create({ name, slug: "home", profile_type: "landing", status: 1 })
-```
+For business landing (service business, solo founder):
 
-## Step 2: Plan sections
+1. `hero` variant `split` (value prop + hero image)
+2. `features` variant `icon-grid` (3-4 benefits)
+3. `process` variant `steps` (how it works, 3-5 steps)
+4. `testimonials`
+5. `cta` variant `banner` (book consultation / contact)
+6. `footer`
 
-9 section types available — see `section_catalog()` for variants per type.
+## Section variants quick reference
 
-Standard order for a typical landing:
-1. `header` (logo + nav, optional on single_page)
-2. `hero` (title + tagline + CTA + image)
-3. `items` (services / link grid / menu items)
-4. `products` (when store has products)
-5. `content` (about / story)
-6. `gallery` (images)
-7. `cta` (signup / contact form)
-8. `footer`
+Call `section_catalog()` for the full list. Common variants:
 
-For F&B (`tag: food`): use `hero` variant `restaurant` (has open_hours, rating, location).
-For tour: `hero` variant `tour`.
-For shop: `hero` variant `product`.
+| Section | Variants | When to use |
+|---|---|---|
+| `hero` | minimal, split, centered, restaurant, tour, product | minimal for bio, split for business |
+| `items` | link-grid, services, menu | link-grid for bio, services for business |
+| `content` | story, split-image, timeline, custom | story for about |
+| `gallery` | grid, masonry, carousel, lightbox | masonry for creative |
+| `testimonials` | cards, slider, featured, minimal | cards for general |
+| `cta` | banner, split, floating, inline | floating for sticky |
 
-## Step 3: Add sections with `section_upsert`
-
-ALWAYS use `section_upsert` (idempotent), never `section_add`. Each section has `template_html` from registry variant — DO NOT write custom HTML unless explicitly asked.
-
-```
-section_upsert({
-  bio_id, position: 1, section_type: "hero", variant: "split",
-  content: { title, subtitle, image_url, cta_text, cta_link }
-})
-```
-
-Or batch many at once:
-```
-section_batch_upsert({ bio_id, sections: [...] })
-```
-
-## Step 4: Mustache variables — required pattern
-
-All section content uses Mustache. NEVER hardcode text directly in template_html. Pass data via `content` field:
-- Backend auto-resolves `product_ids`, `category_ids`, `media_id`, `media_ids` into Mustache vars.
-- Frontend renders Mustache at runtime.
-
-## Step 5: Field name gotchas
+## Field name gotchas
 
 Common WRONG → CORRECT:
 - testimonials: `quote` → `content`, `name` → `author_name`, `role` → `author_title`, `avatar` → `author_avatar`
 - about: `description` → `story`
 - footer: `brand` → `logo_text`, columns `items[].text` → `links[].label`, `items[].link` → `links[].url`
-- hero (restaurant/destination/tour): use `background_image`, NOT `image`
+- hero (restaurant/destination/tour/centered): use `background_image`, NOT `image`
 
-## Step 6: Header/footer inheritance
+## Mustache rule
 
-For sub-page bios (blog post, product detail, etc.), DO NOT add `header` or `footer` sections — they inherit from the store's landing bio.
+All section content uses Mustache. NEVER hardcode text in template_html. Pass data via `content` field — backend auto-resolves `product_ids`, `media_id`, etc.
 
-## Step 7: Publish
+## Add sections
+
+Use `section_upsert` (idempotent), or batch:
 
 ```
-page_publish({ bio_id })  // or page_update({ status: 1 })
+section_upsert({
+  bio_id, position: 1, section_type: "hero", variant: "minimal",
+  content: { title, subtitle, avatar_image, cta_text, cta_link }
+})
+
+// Or many at once
+section_batch_upsert({ bio_id, sections: [...] })
+```
+
+## Theme
+
+After sections, trigger `theme-customize` skill to apply preset matching the vibe.
+
+## Header/footer inheritance
+
+For sub-pages on multi_page stores (not bio link), DO NOT add header/footer — they inherit from store landing.
+
+For single_page bio, all sections live on 1 page — no inheritance.
+
+## Publish
+
+```
+page_publish({ bio_id })
+// or store_update({ status: 1 }) + bio_update({ status: 1 })
 ```
 
 ## After designing
 
-- Confirm with user, ask for changes.
-- Trigger `theme-customize` if user wants to adjust colors/typography.
-- Trigger `publish-deploy` for custom domain setup.
+Trigger `landing-cta` if user wants conversion optimization.
+Trigger `theme-customize` for visual styling.
+Trigger `publish-deploy` for custom domain.
+
+## Don't
+
+- ❌ Don't add `products` section to a bio link (use ecom-setup for that)
+- ❌ Don't add complex sections (cart, checkout) to bio link
+- ❌ Don't write custom template_html — use registry variants
+- ❌ Don't add header/footer to sub-pages (inheritance handles it)

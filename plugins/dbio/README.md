@@ -6,13 +6,14 @@ Build websites, bio pages, and online stores on [Dbio](https://dbio.ai) — all 
 
 This plugin connects Claude Code to your Dbio account so you can:
 
-- Create stores (single-page, multi-page, wiki, e-commerce)
-- Design bio pages and landing pages with sections
-- Add products with AI-generated images
-- Customize themes (colors, typography)
-- Publish and connect custom domains
+- **Bio link / landing pages** — single-page personal sites, link-in-bio, CV
+- **E-commerce stores** — products, cart, checkout, coupons
+- **Blogs & news** — multi-page content sites with categories
+- **Wikis & docs** — hierarchical knowledge bases
+- **Multi-page sites** — portfolios, catalogs, corporate sites
+- **Verticals** (via templates) — restaurants, events, courses, services, and more
 
-Claude understands Dbio's conventions out of the box — section variants, field name gotchas, template flow, multi-tenant rules — so you get correct results without learning the MCP tool names.
+Claude understands Dbio's conventions out of the box — section variants, field name gotchas, template flow, vertical patterns — so you get correct results without learning the MCP tool names.
 
 ## Install
 
@@ -49,14 +50,20 @@ claude
 
 ## Try it
 
+Slash commands:
 ```
-/dbio:new-store My Coffee Shop
+/dbio:new-shop My Coffee Shop
+/dbio:new-blog Tech Insights
+/dbio:new-landing Product Launch
+/dbio:new-wiki Product Docs
+/dbio:find-template restaurant with menu and reservation
 ```
 
-Or just talk:
+Or just talk to Claude:
 
-> "Tạo cho tôi 1 trang bio cho quán cafe"  
-> "Build me an e-commerce store for selling t-shirts"  
+> "Tạo cho tôi 1 trang bán hàng cho quán cafe"  
+> "Build me a tech blog with categories"  
+> "I want a docs site for my API"  
 > "Add 5 menu items to my restaurant store"
 
 The plugin's skills auto-activate based on context — no command needed.
@@ -65,27 +72,44 @@ The plugin's skills auto-activate based on context — no command needed.
 
 | Command | Purpose |
 |---|---|
-| `/dbio:new-store [name]` | Create a new store (interactive) |
-| `/dbio:new-bio [name]` | Add a new page to active store |
-| `/dbio:add-product [description]` | Create a product with AI image |
-| `/dbio:templates [type] [industry]` | Browse templates |
+| `/dbio:find-template <description>` | Find a template by use case (semantic) |
+| `/dbio:new-store [name]` | Create blank store (interactive) |
+| `/dbio:new-shop [name]` | Create ecommerce store |
+| `/dbio:new-landing [name]` | Create landing page |
+| `/dbio:new-blog [name]` | Create blog/news site |
+| `/dbio:new-wiki [name]` | Create wiki/docs site |
+| `/dbio:new-bio [name]` | Add a page to active store |
+| `/dbio:ecom-add-product <desc>` | Create a product with AI image |
 | `/dbio:publish` | Publish active store, show URL |
-| `/dbio:whoami` | Show current session, platform, quota |
+| `/dbio:whoami` | Show session, platform, quota |
 
 ## Skills (auto-activated)
 
-Claude automatically uses these when relevant — no slash command needed:
+Claude automatically uses these based on context:
+
+### Cross-cutting
 
 | Skill | Activates when |
 |---|---|
-| `store-create` | User wants to create a new site/store |
-| `bio-design` | User wants to design or edit a page |
-| `ecommerce-setup` | User is building an online shop |
-| `product-create` | User wants to add products |
-| `content-write` | User asks for copy / headlines / CTAs |
-| `theme-customize` | User wants to change colors / fonts |
-| `publish-deploy` | User wants to publish or add a domain |
-| `platform-switch` | User wants to change platforms or self-host |
+| `template-search` | User wants to create anything new (tries templates first) |
+| `store-create` | Build from scratch (no template) |
+| `content-write` | Writing copy, headlines, descriptions |
+| `theme-customize` | Change colors, fonts, design tokens |
+| `publish-deploy` | Publish or set up custom domain |
+| `platform-switch` | Change platform endpoint or self-host |
+
+### Vertical-specific
+
+| Skill | Activates when |
+|---|---|
+| `bio-design` | Personal bio link / single-page landing |
+| `landing-cta` | Optimize landing page conversions |
+| `ecom-setup` | Set up e-commerce store |
+| `ecom-product` | Add products to ecom store |
+| `ecom-checkout` | Configure coupons, payments, orders |
+| `blog-setup` | Set up blog/news site structure |
+| `blog-write` | Draft SEO-optimized blog posts |
+| `wiki-structure` | Structure knowledge base / docs |
 
 ## Configuration
 

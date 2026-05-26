@@ -1,5 +1,5 @@
 ---
-description: Set up an e-commerce store on Dbio — products, categories, brands, payment, checkout. Use when user wants to build an online shop, sell products, or convert existing site to e-commerce.
+description: Set up an e-commerce store on Dbio — full pipeline of products, categories, brands, sections, checkout. Use when user wants to build an online shop, sell products, restaurant ordering, or convert existing site to e-commerce.
 ---
 
 # E-commerce Setup
@@ -15,9 +15,23 @@ If user has a `single_page` or `multi_page` store: ask if they want to convert t
 
 ## Recommended flow
 
+### 0. Try template_search FIRST
+
+Before manual setup, trigger `template-search` skill:
+```
+template_search({
+  query: "<niche> online store",
+  store_type: "ecomm",
+  industry: "<inferred>",
+  features: ["cart", "checkout"]
+})
+```
+
+If a matching template exists → clone it via `template_clone_store` → skip to step 5 for customization.
+
 ### 1. Add products first
 
-Trigger `product-create` skill. Suggest at least 3-5 products before designing the landing page (so product sections have data).
+Trigger `ecom-product` skill. Suggest at least 3-5 products before designing the landing page (so product sections have data).
 
 ### 2. Categories & brands (auto-managed)
 
