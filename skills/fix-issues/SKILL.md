@@ -1,4 +1,5 @@
 ---
+name: fix-issues
 description: Diagnose and fix common Dbio site issues — page not visible, broken images, CSS layout broken, Mustache vars showing as text, menu 404, products not appearing, mobile layout issues, custom domain not working. Use when user says "lỗi", "không hiện", "broken", "không work", "fix", "sai".
 ---
 

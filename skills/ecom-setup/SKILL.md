@@ -1,4 +1,5 @@
 ---
+name: ecom-setup
 description: Set up an e-commerce store on Dbio — full pipeline of products, categories, brands, sections, checkout. Use when user wants to build an online shop, sell products, restaurant ordering, or convert existing site to e-commerce.
 ---
 

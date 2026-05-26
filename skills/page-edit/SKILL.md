@@ -1,4 +1,5 @@
 ---
+name: page-edit
 description: Edit existing pages and sections on a Dbio site — change text, swap images, reorder, delete sections, restore from backup. Use when user wants to MODIFY existing content (not create new). Trigger phrases - "sửa", "đổi", "thay", "edit", "update", "remove", "delete", "rollback".
 ---
 

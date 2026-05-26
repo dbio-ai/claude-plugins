@@ -1,4 +1,5 @@
 ---
+name: theme-customize
 description: Customize Dbio store theme — colors, typography, spacing, design tokens. Use when user wants to change look-and-feel, apply a preset, or adjust theme tokens.
 ---
 

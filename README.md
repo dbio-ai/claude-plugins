@@ -117,6 +117,65 @@ Skills auto-activate based on context — no command needed.
 | `DBIO_API_KEY` | API key (required) | — |
 | `DBIO_MCP_URL` | MCP server endpoint | `https://mcp.dbio.ai/mcp` |
 
+## Use with other AI tools
+
+The MCP server (`mcp.dbio.ai`) works standalone — any MCP-compatible client can use Dbio without this plugin. Skills are a bonus layer to make Claude / Codex more accurate.
+
+### Cursor IDE
+
+Cursor supports MCP but does not use skill files. Add MCP server only:
+
+`~/.cursor/mcp.json` (or `.cursor/mcp.json` per-project):
+```json
+{
+  "mcpServers": {
+    "dbio": {
+      "url": "https://mcp.dbio.ai/mcp",
+      "headers": { "Authorization": "Bearer ${env:DBIO_API_KEY}" }
+    }
+  }
+}
+```
+
+Cursor will surface all Dbio MCP tools to its agent automatically. No skills, but tool descriptions are detailed enough to be usable standalone.
+
+### OpenAI Codex CLI
+
+Codex supports both MCP servers AND skills (similar to Claude Code).
+
+**MCP** — add to `~/.codex/config.toml`:
+```toml
+[mcp_servers.dbio]
+url = "https://mcp.dbio.ai/mcp"
+bearer_token_env_var = "DBIO_API_KEY"
+```
+
+**Skills** — Codex reads skills from `$HOME/.agents/skills/` or `.agents/skills/` (per-project). Skill format is compatible with this plugin (SKILL.md with `name` + `description` frontmatter).
+
+To use Dbio skills with Codex:
+```bash
+git clone https://github.com/dbio-ai/claude-plugins ~/dbio-plugin
+mkdir -p ~/.agents/skills
+ln -s ~/dbio-plugin/skills/* ~/.agents/skills/
+```
+
+(On Windows: use `mklink /D` or copy the folders.)
+
+Now Codex auto-fires the skills the same way Claude does. The `name:` field in each SKILL.md is what Codex uses to identify skills.
+
+### Other agent CLIs
+
+For Continue.dev, Aider, Gemini CLI, etc. — MCP support varies. Check their docs for MCP config syntax. The endpoint stays the same: `https://mcp.dbio.ai/mcp` with `Authorization: Bearer <DBIO_API_KEY>` header.
+
+### Standalone (no plugin)
+
+The MCP server tool descriptions are written to be self-sufficient. Any AI with MCP access can:
+- Read `agent_guidelines({ topic: "..." })` for in-depth flow docs
+- Call `components_guide()` for section variant catalog
+- Use detailed schema descriptions on each tool
+
+You lose the workflow orchestration that skills provide, but core functionality works without any plugin.
+
 ## Troubleshooting
 
 - **Unauthorized errors** — API key invalid/expired. Get a new one at the dashboard.

@@ -1,4 +1,5 @@
 ---
+name: template-search
 description: Find Dbio templates by store type and industry filter. Use FIRST whenever the user wants to create a new site, store, or page — cloning a template is faster than building from scratch. Templates are auto-scoped to the user's platform via API key.
 ---
 

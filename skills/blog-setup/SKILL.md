@@ -1,4 +1,5 @@
 ---
+name: blog-setup
 description: Set up a blog or news site on Dbio (multi-page with article list, categories, tags, search). Use when user wants to start a blog, news site, content site, or magazine on Dbio.
 ---
 
@@ -19,14 +20,13 @@ If user has no store yet → trigger `store-create` first, then come back.
 
 ```
 template_browse({
-  query: "<niche> blog with article list and search",
   store_type: "multi_page",
-  industry: "<niche e.g. tech, food, lifestyle>",
-  features: ["blog", "categories"]
+  tag: "blog",
+  limit: 10
 })
 ```
 
-If template found → clone, skip to step 5.
+If template found → clone via `template_clone_store`, skip to step 5.
 
 ### 2. Create landing bio for blog homepage
 

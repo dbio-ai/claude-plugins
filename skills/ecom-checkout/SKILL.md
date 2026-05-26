@@ -1,4 +1,5 @@
 ---
+name: ecom-checkout
 description: Guide the user through checkout, payment, coupons, and order management for a Dbio e-commerce store. Most operations are dashboard-only — this skill tells the user where to go and what's possible via MCP vs dashboard.
 ---
 

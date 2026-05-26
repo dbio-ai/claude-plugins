@@ -1,4 +1,5 @@
 ---
+name: ecom-product
 description: Create products with images, categories, brands, variants on Dbio e-commerce store. Use when user wants to add products to their ecomm store — single product, bulk import, or with AI-generated images.
 ---
 

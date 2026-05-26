@@ -1,4 +1,5 @@
 ---
+name: blog-write
 description: Write blog posts and articles for Dbio — SEO-optimized, well-structured content. Use when user wants to draft a blog post, news article, or tutorial.
 ---
 

@@ -1,4 +1,5 @@
 ---
+name: bio-design
 description: Design bio link pages and personal landing pages on Dbio (single_page type — link-in-bio, CV, profile, business card). For ecommerce/blog/wiki/event use the vertical-specific skill instead.
 ---
 

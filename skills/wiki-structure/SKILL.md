@@ -1,4 +1,5 @@
 ---
+name: wiki-structure
 description: Structure a knowledge base, documentation site, or help center on Dbio. Use when user wants to build docs, wiki, KB, internal docs, or hierarchical guides.
 ---
 

@@ -1,4 +1,5 @@
 ---
+name: publish-deploy
 description: Publish a Dbio store, set up custom domain, manage subdomains. Use when user wants to make their site live, connect a custom domain, or verify DNS.
 ---
 

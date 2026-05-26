@@ -1,4 +1,5 @@
 ---
+name: content-write
 description: Write copy for any Dbio site element — headlines, descriptions, CTAs, product descriptions, about pages, hero text. Auto-detects context (industry, store type, page type) and adjusts tone accordingly.
 ---
 
