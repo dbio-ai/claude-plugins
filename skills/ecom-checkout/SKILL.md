@@ -1,98 +1,88 @@
 ---
-description: Configure checkout, coupons, payment options, and order flow for a Dbio e-commerce store. Use when user wants to set up coupons, configure payment methods, customize cart/checkout, or manage orders.
+description: Guide the user through checkout, payment, coupons, and order management for a Dbio e-commerce store. Most operations are dashboard-only — this skill tells the user where to go and what's possible via MCP vs dashboard.
 ---
 
-# E-commerce Checkout Setup
+# E-commerce Checkout & Operations Guide
 
-Use when user wants to configure checkout-related features on an active ecomm store.
+Use when user asks about checkout, payment, coupons, orders, customers, refunds, shipping, abandoned cart, etc.
 
-## Prerequisites
+**Important**: Most checkout/order operations are **dashboard-only** for security. This skill mostly tells the user where to go, not what tools to call.
 
-- Active store with `store_type: ecomm`
-- `store_select` already called
-- Has at least 1 product (else suggest `ecom-product` first)
+## What CAN be done via MCP
 
-## Common tasks
+Available tools:
+- `store_update` — configure store-level settings (features, currency display)
+- `shop_publish` / `shop_unpublish` — go live / pause
+- `wallet_balance`, `wallet_transactions` — read-only wallet info
+- `quota_check` — see plan limits + usage
 
-### 1. Create a coupon
+## What is DASHBOARD-ONLY (do NOT try to call via MCP)
 
-```
-coupon_create({
-  code: "WELCOME10",                 // user-facing code, uppercase
-  discount_type: "percentage",       // percentage | fixed
-  discount_value: 10,                // 10% or fixed amount in store currency
-  min_order_amount: 100000,          // optional, in store currency
-  max_uses: 100,                     // optional total cap
-  max_uses_per_user: 1,              // optional per-user cap
-  starts_at: "2026-06-01 00:00:00",  // optional, ISO datetime
-  expires_at: "2026-12-31 23:59:59", // optional
-  applicable_to: "all",              // all | products | categories
-  status: 1
-})
-```
+These are NOT exposed via public MCP — direct user to the dashboard:
 
-Best practices:
+| Feature | Where in dashboard |
+|---|---|
+| Create / edit coupons | Marketing → Coupons |
+| List / update orders | Orders tab |
+| Refund order | Orders → click order → Refund |
+| Payment methods setup | Settings → Payments |
+| Shipping rates / zones | Settings → Shipping |
+| Tax / VAT config | Settings → Tax |
+| Abandoned cart recovery | Marketing → Email Recovery |
+| Wallet deposit / withdraw | Wallet tab |
+| Custom domain DNS setup | Settings → Domains |
+
+## Payment methods (informational)
+
+- **dbio.ai** → Stripe (cards, Apple Pay, Google Pay, subscriptions)
+- **dbio.vn** → SePay (VietQR bank transfer) + Stripe optional
+- Self-hosted → custom config
+
+User configures in Dashboard → Payments. MCP cannot set up payment accounts.
+
+## Coupon advice (when user asks)
+
+Tell user: Dashboard → Marketing → Coupons → "New coupon"
+
+Suggested settings:
 - First-time discount: 10-15% off
-- Cart minimum: 5x discount value (avoid abuse)
+- Cart minimum: 5x discount amount (avoid abuse)
 - Time-bound: 7-30 days for urgency
-- Don't stack coupons (max_uses_per_user: 1)
+- Limit 1 use per customer (no stacking)
 
-### 2. Free shipping threshold
+## What this skill CAN do via MCP
 
-Configure in store settings (dashboard) — not exposed via MCP for security.
+### Toggle store features
 
-Instruct user:
-> "Set free shipping threshold at Dashboard → Settings → Shipping. Common value: 2-3x average order value."
-
-### 3. Payment methods
-
-Configured per-platform automatically:
-- dbio.ai → Stripe (cards, Apple Pay, Google Pay) — user enables in Dashboard → Payments
-- dbio.vn → SePay (VietQR bank transfer) + Stripe — user adds bank account in Dashboard
-
-Cannot be configured via MCP. Tell user where to go.
-
-### 4. Order management
-
-List recent orders:
-```
-order_list({ status: "pending", limit: 20 })
-```
-
-Update order status:
-```
-order_update({ order_id, status: "shipped", tracking_number: "..." })
-```
-
-Order lifecycle: `pending → paid → shipped → delivered` (or `cancelled`/`refunded`).
-
-### 5. Customer accounts (optional)
-
-If user wants customer login + order history:
 ```
 store_update({
-  settings: { features: { customer_accounts: true } }
+  settings: {
+    features: {
+      customer_accounts: true,
+      reviews: true,
+      wishlist: true
+    }
+  }
 })
 ```
 
-This enables `/auth/login` page on the storefront.
+### Publish / unpublish
 
-### 6. Tax & invoice
+```
+shop_publish()       // go live
+shop_unpublish()     // take offline (drafts stay)
+```
 
-VN market:
-- Show tax-included pricing (default in Dbio for VND stores)
-- VAT invoice flow: dashboard-only, user inputs MST + uploads receipt template
+### Check plan limits
 
-International (USD):
-- Tax handled by Stripe Tax (auto-calculate per region) — user enables in Dashboard
-
-### 7. Abandoned cart recovery
-
-Dashboard-only feature (uses notification queue). Tell user:
-> "Enable abandoned cart emails at Dashboard → Marketing → Recovery. Default sends at 1h, 24h, 72h."
+```
+quota_check()        // current usage + limits
+pricing_list()       // available plans
+```
 
 ## Don't
 
-- ❌ Don't try to call `wallet_deposit`, `wallet_purchase`, `domain_purchase` — dashboard-only
-- ❌ Don't hardcode payment method — depends on platform
-- ❌ Don't expose coupon codes in URLs or social posts (suggest unique per channel)
+- ❌ Don't call `coupon_create`, `order_list`, `order_update`, `customer_list` — NOT in public MCP
+- ❌ Don't try to set up Stripe/SePay via MCP — dashboard-only
+- ❌ Don't promise to manage orders from chat
+- ❌ Don't claim refunds can be processed via MCP

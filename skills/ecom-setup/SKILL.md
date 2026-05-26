@@ -15,11 +15,11 @@ If user has a `single_page` or `multi_page` store: ask if they want to convert t
 
 ## Recommended flow
 
-### 0. Try template_search FIRST
+### 0. Try template_browse FIRST
 
 Before manual setup, trigger `template-search` skill:
 ```
-template_search({
+template_browse({
   query: "<niche> online store",
   store_type: "ecomm",
   industry: "<inferred>",

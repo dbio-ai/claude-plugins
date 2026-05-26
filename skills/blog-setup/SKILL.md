@@ -15,10 +15,10 @@ If user has no store yet → trigger `store-create` first, then come back.
 
 ## Recommended flow
 
-### 1. Always try template_search first
+### 1. Always try template_browse first
 
 ```
-template_search({
+template_browse({
   query: "<niche> blog with article list and search",
   store_type: "multi_page",
   industry: "<niche e.g. tech, food, lifestyle>",
@@ -31,7 +31,7 @@ If template found → clone, skip to step 5.
 ### 2. Create landing bio for blog homepage
 
 ```
-bio_create({ name: "Home", slug: "home", profile_type: "landing", status: 0 })
+page_create({ name: "Home", slug: "home", profile_type: "landing", status: 0 })
 ```
 
 ### 3. Add core sections to landing
@@ -49,7 +49,7 @@ Standard blog landing:
 Blog posts use `profile_type: blog` bio pages, slug = post slug:
 
 ```
-bio_create({
+page_create({
   name: "How to brew Vietnamese coffee",
   slug: "how-to-brew-vietnamese-coffee",
   profile_type: "blog",
@@ -65,21 +65,19 @@ Each blog post has standard sections:
 
 ### 5. Categories & tags
 
-Blog categories via `categories` (per-store):
+Categorization for blog posts uses `metadata` on the page (not the ecommerce catalog). Call `page_schema({ profile_type: "blog" })` first to confirm available fields, then:
+
 ```
-// User passes names, backend resolves
-bio_update({
-  bio_id,
-  category_names: ["Tutorials", "Recipes", "Reviews"]
+page_update({
+  page_id,
+  metadata: {
+    categories: ["Tutorials", "Recipes"],
+    tags: ["coffee", "vietnamese", "beginner"]
+  }
 })
 ```
 
-Tags via `tags` field:
-```
-bio_update({ bio_id, tags: ["coffee", "vietnamese", "beginner"] })
-```
-
-These power the category/tag archive pages on the storefront.
+If the storefront supports `/category/<slug>` archive pages, those are auto-generated from `metadata.categories`. Check `page_schema()` for the exact contract.
 
 ### 6. Menu
 
@@ -103,8 +101,8 @@ ALWAYS include `type: 'link'` on menu items.
 
 For each post:
 ```
-bio_update({
-  bio_id,
+page_update({
+  page_id,
   seo: {
     title: "<post title> | <site name>",   // 50-60 chars
     description: "<meta description>",      // 140-160 chars
@@ -119,7 +117,7 @@ bio_update({
 Add a `newsletter` section on landing + every post footer:
 ```
 section_upsert({
-  bio_id, section_type: "newsletter", variant: "inline",
+  page_id, section_type: "newsletter", variant: "inline",
   content: {
     title: "Nhận bài mới mỗi tuần",
     subtitle: "Không spam, hủy bất kỳ lúc nào",
@@ -141,8 +139,8 @@ Trigger `blog-write` skill for actual content generation.
 ## Publish workflow
 
 - Draft: `status: 0` (not visible)
-- Publish: `bio_update({ status: 1 })` or `page_publish({ bio_id })`
-- Schedule: `bio_update({ publish_at: "2026-06-01 09:00:00", status: 0 })` — auto-publishes at that time
+- Publish: `page_update({ status: 1 })` or `page_publish({ page_id })`
+- Schedule: `page_update({ publish_at: "2026-06-01 09:00:00", status: 0 })` — auto-publishes at that time
 
 ## QA checklist
 

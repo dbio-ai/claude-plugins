@@ -23,13 +23,13 @@ If user has different store type, suggest creating new wiki store (don't convert
 
 ## Recommended flow
 
-### 1. Try template_search first
+### 1. Try template_browse first
 
 ```
-template_search({
-  query: "documentation knowledge base <topic>",
+template_browse({
   store_type: "wiki",
-  features: ["search", "sidebar", "toc"]
+  tag: "docs",
+  limit: 10
 })
 ```
 
@@ -59,26 +59,29 @@ Standard wiki IA:
 
 ### 3. Create pages with hierarchy
 
-Wiki pages use `bio_create` with `profile_type: 'wiki'`:
+Wiki pages use `page_create`. Available `profile_type` values (verify with `page_schema()`): `landing`, `blog`, `portfolio`, `service`, `place`, etc. There is no dedicated `wiki` profile_type — use `landing` for category pages and `blog` for individual articles, OR use `page_schema()` to see what the store's `wiki` store_type expects.
 
 ```
-// Top-level category
-bio_create({
+// Top-level category page
+page_create({
   name: "Getting Started",
   slug: "getting-started",
-  profile_type: "wiki",
+  profile_type: "landing",       // or whatever page_schema recommends
   status: 1
 })
 
-// Child page
-bio_create({
+// Article page (sub-page)
+page_create({
   name: "Quickstart",
   slug: "quickstart",
-  profile_type: "wiki",
-  parent_id: <getting_started_id>,    // creates hierarchy
+  profile_type: "blog",          // long-form article
   status: 1
 })
 ```
+
+For parent-child hierarchy: Dbio routes nested pages by slug pattern (`/category/article`). Set the article's slug to include parent path, OR use `page_set_domain` to set custom routes. Check `page_schema()` for the wiki store_type's exact hierarchy mechanism.
+
+⚠️ Call `page_schema()` FIRST to confirm the available profile_types and field contracts for the active wiki store. Schema may evolve.
 
 ### 4. Add content sections to each wiki page
 
@@ -89,7 +92,7 @@ Standard wiki page sections:
 
 ```
 section_upsert({
-  bio_id, section_type: "content", variant: "article-body",
+  page_id, section_type: "content", variant: "article-body",
   content: {
     body_html: "<the content>",
     toc: true,                     // auto-generate in-page TOC from H2/H3
@@ -103,7 +106,7 @@ section_upsert({
 Wiki store auto-generates sidebar from `bio_profiles` hierarchy. Order via `position`:
 
 ```
-bio_update({ bio_id, position: 10 })  // lower = higher in sidebar
+page_update({ page_id, position: 10 })  // lower = higher in sidebar
 ```
 
 Group section headers (categories) appear automatically based on `parent_id` tree.

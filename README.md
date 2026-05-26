@@ -85,8 +85,7 @@ Skills auto-activate based on context — no command needed.
 - `store-create` — build from scratch when no template fits
 - `content-write` — context-aware copy (industry, locale)
 - `theme-customize` — colors, typography, design tokens
-- `publish-deploy` — publish + custom domain
-- `platform-switch` — switch platform endpoint
+- `publish-deploy` — publish + custom domain + DNS verify
 
 ### Vertical-specific
 - `bio-design` — bio link / personal landing

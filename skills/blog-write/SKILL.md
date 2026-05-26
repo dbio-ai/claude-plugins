@@ -9,7 +9,7 @@ Use when user wants to draft a blog post, news article, or any long-form content
 ## Detect context
 
 1. Call `auth_get_session()` for locale + active store
-2. Read store's existing posts (`bio_list({ profile_type: 'blog' })`) to match tone/voice
+2. Read store's existing posts (`page_list({ profile_type: 'blog' })`) to match tone/voice
 3. Ask user for: topic, target keyword, desired length, tone (if not clear)
 
 ## Article structure (default 800-1500 words)
@@ -47,8 +47,8 @@ Length: 50-65 chars (SEO + social sharing optimal).
 For each post:
 
 ```
-bio_update({
-  bio_id,
+page_update({
+  page_id,
   seo: {
     title: "<H1 title>",                  // 50-60 chars
     description: "<one-paragraph summary>", // 140-160 chars, include keyword + CTA
@@ -78,7 +78,7 @@ media_generate_image({
 
 Set as post cover:
 ```
-bio_update({ bio_id, cover_media_id: <id> })
+page_update({ page_id, cover_media_id: <id> })
 ```
 
 ## Body content as portable text
@@ -87,7 +87,7 @@ Dbio uses Portable Text for blog body (rich content). Pass to section:
 
 ```
 section_upsert({
-  bio_id, section_type: "content", variant: "article-body",
+  page_id, section_type: "content", variant: "article-body",
   content: {
     body_html: "<rendered HTML with proper headings, lists, blockquotes>"
     // OR use portable_text format if available
@@ -117,7 +117,7 @@ Calculated automatically by Dbio (250 wpm). Show in hero meta. Aim for 5-8 min r
 
 ## After writing
 
-- Suggest schedule publish via `bio_update({ publish_at: "..." })`
+- Suggest schedule publish via `page_update({ publish_at: "..." })`
 - Suggest social share copy (1 tweet + 1 LinkedIn post)
 - Suggest 3-5 related posts to internal-link from this article
 - If user has newsletter: suggest email teaser

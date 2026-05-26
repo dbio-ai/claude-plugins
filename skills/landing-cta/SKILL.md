@@ -39,7 +39,7 @@ Update via `section_upsert`:
 
 ```
 section_upsert({
-  bio_id, position: 1, section_type: "hero",
+  page_id, position: 1, section_type: "hero",
   variant: "split",
   content: {
     title: "Cafe Sài Gòn xưa, hương vị nay",
@@ -59,7 +59,7 @@ Add a contact/signup section:
 
 ```
 section_upsert({
-  bio_id, section_type: "contact", variant: "form",
+  page_id, section_type: "contact", variant: "form",
   content: {
     title: "Để lại thông tin, chúng tôi liên hệ trong 1h",
     fields: [

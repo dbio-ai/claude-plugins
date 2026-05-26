@@ -70,12 +70,12 @@ Use `section_upsert` (idempotent), or batch:
 
 ```
 section_upsert({
-  bio_id, position: 1, section_type: "hero", variant: "minimal",
+  page_id, position: 1, section_type: "hero", variant: "minimal",
   content: { title, subtitle, avatar_image, cta_text, cta_link }
 })
 
 // Or many at once
-section_batch_upsert({ bio_id, sections: [...] })
+section_batch_upsert({ page_id, sections: [...] })
 ```
 
 ## Theme
@@ -91,8 +91,8 @@ For single_page bio, all sections live on 1 page — no inheritance.
 ## Publish
 
 ```
-page_publish({ bio_id })
-// or store_update({ status: 1 }) + bio_update({ status: 1 })
+page_publish({ page_id })
+// or store_update({ status: 1 }) + page_update({ status: 1 })
 ```
 
 ## After designing

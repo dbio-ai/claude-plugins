@@ -1,5 +1,5 @@
 ---
-description: Publish a Dbio store, set up custom domain, manage subdomains. Use when user wants to make their site live, connect a custom domain, or manage publishing.
+description: Publish a Dbio store, set up custom domain, manage subdomains. Use when user wants to make their site live, connect a custom domain, or verify DNS.
 ---
 
 # Publish & Deploy
@@ -12,7 +12,7 @@ Use when user wants to publish their site or connect a custom domain.
 shop_publish()
 ```
 
-This makes the store + all published pages live. Default URL:
+Makes the store + all published pages live. Default URL:
 ```
 {global_code}.dbio.ai     (international platform)
 {global_code}.dbio.vn     (Vietnam platform)
@@ -23,18 +23,23 @@ Get the live URL:
 get_urls()
 ```
 
-## Step 2: Verify pages are published
+## Step 2: Publish individual pages
 
-Each `bio_profile` has its own `status`. Set `status: 1` to publish individual pages:
+Each page has its own `status`. Set `status: 1` to publish:
 ```
-page_update({ bio_id, status: 1 })
+page_update({ page_id, status: 1 })
 // or
-page_publish({ bio_id })
+page_publish({ page_id })
 ```
 
-Pages with `status: 0` show as drafts (not public).
+Pages with `status: 0` are drafts (not public).
 
-## Step 3: List existing domains
+List drafts:
+```
+page_list({ status: 0 })
+```
+
+## Step 3: List current domains
 
 ```
 domain_list()
@@ -42,52 +47,81 @@ domain_list()
 
 Returns subdomain + any custom domains attached.
 
-## Step 4: Custom domain (dashboard-only, not via MCP)
+## Step 4: Add a custom domain
 
-Custom domain setup is **dashboard-only** for security reasons. Instruct user:
+```
+domain_add_custom({
+  store_id: <active store id>,
+  domain: "mycafe.com"     // lowercase, no scheme
+})
+```
 
-1. Go to Dashboard → Settings → Domains
-2. Add custom domain (e.g. `mycafe.com`)
-3. Add CNAME record at registrar:
-   ```
+Returns `verification_token` (DNS TXT value).
+
+## Step 5: User adds DNS records
+
+Instruct user to add 2 DNS records at their domain registrar:
+
+```
+1. TXT record (for verification):
+   Type: TXT
+   Name: _dbio-verify.mycafe.com
+   Value: <verification_token from step 4>
+
+2. CNAME (for routing):
    Type: CNAME
-   Name: @  (or `www`)
+   Name: @  (or "www")
    Value: domains.dbio.ai
-   ```
-4. Wait 5-30 minutes for DNS propagation
-5. Dbio auto-issues SSL via Cloudflare
+```
 
-For VN domain (`.vn`), DNS may take longer (up to 2 hours).
+Wait 5-30 minutes for DNS propagation (`.vn` TLD can take up to 2 hours).
 
-## Step 5: Verify deployment
+## Step 6: Verify the domain
+
+```
+domain_verify({
+  store_id: <active store id>,
+  domain: "mycafe.com"
+})
+```
+
+If DNS TXT propagated, domain becomes active. SSL auto-issued via Cloudflare within minutes.
+
+If verification fails: ask user to wait longer (DNS hasn't propagated) and retry.
+
+Pending custom domains auto-expire after 7 days if unverified.
+
+## Step 7: Set primary domain
+
+If multiple domains, mark which is canonical:
+```
+domain_set_primary({ store_id, domain: "mycafe.com" })
+```
+
+## Step 8: Verify deployment
 
 After publishing, ask user to visit the URL. Common checks:
 - All pages load (200, not 404)
-- Images render (no broken images)
+- Images render
 - Menu links route correctly
-- Mobile view looks good
+- Mobile view OK
 - Forms submit (contact, checkout)
-
-If issues: `cache_clear()` is dashboard-only — instruct user to refresh + try incognito.
 
 ## Unpublish
 
-To take site offline:
 ```
-shop_unpublish()
+shop_unpublish()       // take store offline
 ```
 
-Or set individual store `status: 0` via store_update.
+Or set individual page `status: 0` via `page_update`.
 
-## Domain pricing (info only, can't purchase via MCP)
+## Remove a domain
 
-Domain purchase is dashboard-only. Pricing varies by TLD:
-- `.com`, `.net`: standard market rate
-- `.vn`: VN registrar pricing
-- `.ai`: premium TLD
+Domain removal is **dashboard-only** for safety — instruct user: Dashboard → Settings → Domains → Remove.
 
 ## Don't
 
-- ❌ Don't try to call `domain_add`, `domain_purchase`, `cache_clear` — those are dashboard-only tools, not exposed via public MCP.
-- ❌ Don't promise instant DNS propagation — always say "up to 30 minutes".
-- ❌ Don't claim SSL is auto if user uses non-Cloudflare DNS — they may need manual cert.
+- ❌ Don't call `domain_purchase`, `domain_search`, `cache_clear` — these are dashboard-only
+- ❌ Don't promise instant DNS propagation — say "up to 30 minutes" (`.vn` up to 2h)
+- ❌ Don't forget the TXT verification record — domain stays pending without it
+- ❌ Don't claim SSL is auto if user's DNS isn't pointed at Dbio yet

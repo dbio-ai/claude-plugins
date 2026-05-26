@@ -12,7 +12,7 @@ Before writing, gather:
 
 1. `auth_get_session()` → user locale (vi/en/...), active store
 2. Active store info: name, store_type, tags (industry), currency
-3. (If editing existing page) `page_get({ bio_id })` → current content + tone
+3. (If editing existing page) `page_get({ page_id })` → current content + tone
 4. Ask user for specifics if unclear
 
 Build a CONTEXT object internally:

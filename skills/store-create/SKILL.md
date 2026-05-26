@@ -1,5 +1,5 @@
 ---
-description: Create a new Dbio store from scratch (single_page, multi_page, wiki, or ecomm). Use ONLY when template_search returned no matches OR user explicitly says "build from scratch / no template". For any other case, try template_search first.
+description: Create a new Dbio store from scratch (single_page, multi_page, wiki, or ecomm). Use ONLY when template_browse returned no matches OR user explicitly says "build from scratch / no template". For any other case, try template_browse first.
 ---
 
 # Create a Dbio Store (from scratch)

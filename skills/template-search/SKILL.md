@@ -1,51 +1,54 @@
 ---
-description: Find Dbio templates via semantic search. Use FIRST whenever the user wants to create a new site, store, or page — cloning a template is faster and more polished than building from scratch. Templates are auto-scoped to the user's platform.
+description: Find Dbio templates by store type and industry filter. Use FIRST whenever the user wants to create a new site, store, or page — cloning a template is faster than building from scratch. Templates are auto-scoped to the user's platform via API key.
 ---
 
 # Template Search
 
-ALWAYS call this skill BEFORE building anything from scratch. Cloning a template gives the user a polished, tested starting point in seconds.
+ALWAYS call this skill BEFORE building anything from scratch. Cloning a template gives the user a polished starting point in seconds.
 
 ## When to use
 
 ✅ User says: "tạo trang nhà hàng", "I want a tech blog", "build a portfolio", "make me an event landing", "open an online shop"
-✅ Before triggering `bio-design`, `ecom-setup`, `blog-setup`, etc.
+✅ Before triggering `bio-design`, `ecom-setup`, `blog-setup`, `wiki-structure`
 ❌ Skip when user explicitly says "build from scratch" or "no template"
 
 ## Call pattern
 
 ```
-template_search({
-  query: "<synthesize from user intent>",   // semantic — natural language
+template_browse({
   store_type: "single_page|multi_page|ecomm|wiki",  // optional filter
-  industry: "food|fashion|tech|event|edu|...",       // optional
-  features: ["cart", "menu", "ticket", "rsvp"],      // optional
-  limit: 5
+  tag: "food|fashion|tech|event|edu|...",            // optional industry tag
+  limit: 10
 })
 ```
 
-Backend automatically:
-- Searches the user's platform's template vector DB (resolved via API key)
-- Returns top matches with `code`, `name`, `screenshot_url`, `sections_preview`, `industry`, `features`
+Returns top templates with `code`, `name`, `screenshot_url`, `description`, `store_type`, `tags`.
 
-Plugin DOES NOT need to specify platform — backend handles routing.
+Backend auto-scopes templates to the user's platform — plugin doesn't pass platform.
 
-## Compose the query well
+## Pick the right filter
 
-Synthesize from user words + inferred context:
-- User: "tạo cafe ở Sài Gòn" → query: "Vietnamese cafe restaurant Saigon with menu and ordering"
-- User: "tech blog about AI" → query: "modern tech blog AI machine learning developer audience"
-- User: "event landing for conference" → query: "professional event conference landing page with speakers agenda tickets"
+| User intent | store_type | tag |
+|---|---|---|
+| Bio link / link-in-bio / personal landing | `single_page` | `bio_link` or relevant industry |
+| Restaurant / cafe / food shop | `ecomm` | `food` |
+| Online shop / boutique | `ecomm` | `shop` or `fashion`/`beauty`/... |
+| Tech blog / news / magazine | `multi_page` | `blog` |
+| Documentation / KB / docs | `wiki` | `docs` |
+| Event / conference / promo landing | `single_page` | `event_promo` |
+| Portfolio / showcase | `multi_page` | `portfolio` |
+| Service business / agency | `multi_page` or `ecomm` | `service` |
+| Course landing / online course | `ecomm` | `course` |
+| Travel / tour / accommodation | `ecomm` | `travel` |
 
-Better query → better matches. Include industry, language hint, audience, key features.
+If unsure of tag, omit it — show all of that store_type, let user pick.
 
 ## Show results to user
 
-For each template:
-- Thumbnail (use `screenshot_url`)
+For each template (top 5):
 - Name + 1-line description
-- Industry + features tags
-- "Clone this" CTA
+- Screenshot URL (if available)
+- store_type + tags
 
 Don't show more than 5 — choice overload.
 
@@ -55,38 +58,27 @@ Don't show more than 5 — choice overload.
 template_clone_store({
   source_code: <selected template code>,
   new_name: <user's brand name>,
-  global_code: <auto-suggest kebab-case>
+  global_code: <auto-suggest kebab-case from name>
 })
 ```
 
-Then `store_select({ store_id: new_id })` and trigger the appropriate vertical skill for customization (ecom-setup / blog-setup / bio-design / etc.).
+Then `store_select({ store_id: <new_id> })` and trigger the matching vertical skill:
+- `ecomm` template → `ecom-setup` for customization
+- `multi_page` blog template → `blog-setup`
+- `wiki` template → `wiki-structure`
+- `single_page` template → `bio-design`
 
 ## If no matches
 
-Backend returns empty list. Tell user honestly:
+`template_browse` returns empty (filter too narrow) or only generic results:
 
-> "I couldn't find a matching template for your platform. Want to build from scratch, or describe the look you want and I'll generate one?"
+> "Không có template khít với yêu cầu của bạn. Mình có thể build từ đầu — bạn thấy ổn không?"
 
-Fallback to `store-create` skill for blank build.
-
-## Platform awareness
-
-- dbio.ai user → international templates (USD, English-first)
-- dbio.vn user → VN templates (VND, Vietnamese, F&B/retail/service VN style)
-- Self-hosted → custom template pool
-
-Skill never needs to detect platform — API key already does.
-
-## Filter tips
-
-- For ecom: always pass `store_type: "ecomm"` + relevant industry
-- For blog: `store_type: "multi_page"` + `features: ["blog"]`
-- For event: industry "event" + `features: ["ticket", "agenda"]`
-- For F&B: industry "food" + `features: ["menu", "reservation"]`
-- For wiki/docs: `store_type: "wiki"`
+Fall back to `store-create` skill for blank build.
 
 ## Don't
 
-- ❌ Don't call template_search 3+ times with slight variations — refine query and try once or twice
-- ❌ Don't auto-clone without showing user the options first
-- ❌ Don't promise templates exist before searching
+- ❌ Don't call `template_browse` 5 times with slight variations — pick a good filter and run once
+- ❌ Don't auto-clone without showing options first
+- ❌ Don't promise templates exist before browsing
+- ❌ Don't pass `industry` or `features` params — only `store_type` and `tag` are supported by current `template_browse`
