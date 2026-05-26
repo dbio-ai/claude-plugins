@@ -15,11 +15,20 @@ Before editing, fetch current state to know what's there:
 
 ```
 1. auth_get_session()                       // confirm active store
-2. page_list()                              // find the page user means
-3. page_get({ page_id })                    // get sections + content
+2. page_list({ store_id })                  // find the page user means
+3. page_get({ bio_id, store_id, sections_only: true, section_types: [...] })
 ```
 
 `page_get` returns sections with `id`, `position`, `section_type`, `variant`, `content`. Use these IDs for edits.
+
+⚠️ **store_id matters when editing pages of a DIFFERENT store than the active one**:
+- If user just ran `store_select`, active store is set → can omit `store_id`
+- If editing page from another store (user has many) → MUST pass `store_id` explicitly, else `page_get` returns NOT_FOUND
+- Get `store_id` from `auth_get_session().stores[]` or `page_list` result
+
+⚠️ **Page responses can be huge** (50K+ chars for complex pages). ALWAYS pass:
+- `sections_only: true` → skip links/testimonials/products
+- `section_types: ["hero"]` → only fetch the section you'll edit
 
 If user says "edit my home page" → find page with `slug: "home"` from `page_list`.
 

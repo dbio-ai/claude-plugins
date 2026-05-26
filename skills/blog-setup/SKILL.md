@@ -20,13 +20,14 @@ If user has no store yet → trigger `store-create` first, then come back.
 
 ```
 template_browse({
-  store_type: "multi_page",
-  tag: "blog",
+  search: "<niche e.g. tech blog modern>",
+  type: "store",
+  industry: "blog",      // or "news", "magazine"
   limit: 10
 })
 ```
 
-If template found → clone via `template_clone_store`, skip to step 5.
+Filter results to `store_type: "multi_page"` after getting back. If template found → clone via `template_clone_store`, skip to step 5.
 
 ### 2. Create landing bio for blog homepage
 

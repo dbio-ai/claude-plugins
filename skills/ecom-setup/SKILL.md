@@ -21,12 +21,14 @@ If user has a `single_page` or `multi_page` store: ask if they want to convert t
 Before manual setup, trigger `template-search` skill:
 ```
 template_browse({
-  query: "<niche> online store",
-  store_type: "ecomm",
-  industry: "<inferred>",
-  features: ["cart", "checkout"]
+  search: "<niche keyword e.g. 'Vietnamese cafe with menu'>",
+  type: "store",
+  industry: "<food|fashion|shop|service|beauty|travel|...>",  // optional
+  limit: 10
 })
 ```
+
+Filter `store_type: "ecomm"` from results.
 
 If a matching template exists → clone it via `template_clone_store` → skip to step 5 for customization.
 

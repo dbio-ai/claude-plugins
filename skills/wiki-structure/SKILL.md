@@ -28,11 +28,14 @@ If user has different store type, suggest creating new wiki store (don't convert
 
 ```
 template_browse({
-  store_type: "wiki",
-  tag: "docs",
+  search: "<topic e.g. API documentation>",
+  type: "store",
+  industry: "docs",      // or "wiki", "help"
   limit: 10
 })
 ```
+
+Filter results to `store_type: "wiki"` after getting back.
 
 ### 2. Plan information architecture
 
