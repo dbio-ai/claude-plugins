@@ -163,6 +163,38 @@ ln -s ~/.dbio/plugins/skills/* ~/.agents/skills/
 
 See [`config.toml.example`](./config.toml.example) for more options.
 
+### OpenCode (opencode.ai)
+
+OpenCode supports both MCP servers AND skills — and recognizes Claude/Codex skill format natively. Reuse the Codex installer:
+
+```bash
+# macOS / Linux
+curl -sSL https://raw.githubusercontent.com/dbio-ai/claude-plugins/main/install-codex.sh | bash
+
+# Windows (PowerShell)
+irm https://raw.githubusercontent.com/dbio-ai/claude-plugins/main/install-codex.ps1 | iex
+```
+
+Skills land in `~/.agents/skills/` — opencode scans this path by default.
+
+**MCP** — add to `~/.config/opencode/opencode.jsonc`:
+```jsonc
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "dbio": {
+      "type": "remote",
+      "url": "https://mcp.dbio.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer {env:DBIO_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+For dbio.vn, use `https://mcp.dbio.vn/mcp`.
+
 ### Cursor IDE
 
 Cursor supports MCP but has no skill format. Just MCP config (see Quick install).
