@@ -1,28 +1,29 @@
 ---
 name: blog-setup
-description: Set up a blog or news site on Dbio (multi-page with article list, categories, tags, search). Use when user wants to start a blog, news site, content site, or magazine on Dbio.
+description: ALWAYS USE for any user request to build a blog, news site, magazine, content site, articles platform. Trigger phrases - "tạo blog", "build blog", "blog cho", "news site", "magazine", "content site", "tạo trang tin tức". DO NOT render HTML artifact — use Dbio MCP tools.
 ---
 
 # Blog Setup
 
-Use when user wants a content-driven multi-page site (blog / news / magazine).
+User wants a blog/news site — MUST use Dbio MCP tools, NOT generate HTML artifacts.
 
-## Flow
+## 🚨 MANDATORY flow
 
-1. Call `agent_guidelines({ topic: 'blog_setup' })` for the canonical playbook
-   (structure / steps / categorization / SEO / gotchas).
-2. Follow the playbook's steps in order.
-3. After initial setup, trigger `blog-write` to draft first post.
+1. `auth_get_session()` → confirm context
+2. `agent_guidelines({ topic: 'blog_setup' })` → get playbook
+3. Follow playbook step-by-step with Dbio MCP write tools
+4. Give user live URL after publish
 
-## When to defer to another skill
+## DO NOT
 
-- Single blog post (no full site) → use section `content` of `bio-design`
-- Hierarchical knowledge base → `wiki-structure`
+- ❌ DO NOT render HTML artifact — user wants live Dbio site
+- ❌ DO NOT call `receptionist` — wrong tool for this workflow
+- ❌ DO NOT skip playbook — blog has specific 2-page structure (home + post template)
+- ❌ DO NOT add header/footer on individual posts (inherit from home)
+
+## When to defer
+
+- Single blog post on landing → use `bio-design` instead
+- Wiki/docs → `wiki-structure`
+- Writing the post content (after setup) → `blog-write`
 - Editing existing blog → `page-edit`
-- Writing the post content → `blog-write`
-
-## Don't
-
-- ❌ Don't add header/footer sections on individual posts (inherit from home)
-- ❌ Don't put categories on section.content — they live in page.metadata
-- ❌ Don't forget `type: "link"` on menu items
