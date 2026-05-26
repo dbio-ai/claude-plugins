@@ -1,63 +1,116 @@
-# Dbio Plugins for Claude Code
+# Dbio plugin for Claude Code
 
-Official [Claude Code](https://code.claude.com) plugins for [Dbio](https://dbio.ai) — build websites, bio pages, and online stores with AI.
-
-## What's in this marketplace
-
-| Plugin | Description |
-|---|---|
-| **dbio** | Build single-page sites, landing pages, multi-page sites, wikis, and full e-commerce stores on Dbio. |
-
-More plugins coming: `devent` (event/ticketing), `dgame` (game hosting), `dedu` (courses), and more.
+Build websites, bio pages, and online stores on [Dbio](https://dbio.ai) — all from inside Claude Code.
 
 ## Install
 
 ```bash
-# Add this marketplace
 claude plugin marketplace add dbio-ai/claude-plugins
-
-# Install the dbio plugin
 claude plugin install dbio
 ```
 
-## Quick start
+## Setup
 
-1. Get your Dbio API key:
-   - International: https://dbio.ai/settings/api-keys
-   - Vietnam: https://dbio.vn/settings/api-keys
+### 1. Get an API key
 
-2. Set environment variable:
-   ```bash
-   export DBIO_API_KEY="dbio_pk_..."
-   ```
+- **International** (USD): https://dbio.ai/settings/api-keys
+- **Vietnam** (VND, SePay): https://dbio.vn/settings/api-keys
 
-3. Restart Claude Code. Try:
-   ```
-   /dbio:new-store My Cafe
-   ```
-
-See [plugins/dbio/README.md](./plugins/dbio/README.md) for full plugin docs.
-
-## Switching platforms
-
-Override the MCP endpoint to switch between dbio.ai and dbio.vn:
+### 2. Set environment variable
 
 ```bash
-# Default — dbio.ai (USD, international)
-export DBIO_API_KEY="..."
-
-# Vietnam — dbio.vn (VND, SePay)
-export DBIO_MCP_URL="https://mcp.dbio.vn/mcp"
-export DBIO_API_KEY="..."
-
-# Self-hosted / enterprise
-export DBIO_MCP_URL="https://mcp.your-company.com/mcp"
-export DBIO_API_KEY="..."
+# In your shell profile (~/.bashrc, ~/.zshrc, ~/.profile)
+export DBIO_API_KEY="dbio_pk_xxxxxxxxxxxx"
 ```
 
-## License
+For dbio.vn, also set:
+```bash
+export DBIO_MCP_URL="https://mcp.dbio.vn/mcp"
+```
 
-Apache 2.0 — see [LICENSE](./LICENSE).
+### 3. Restart Claude Code
+
+```bash
+# In a new terminal
+claude
+```
+
+## Try it
+
+Slash commands:
+```
+/dbio:new-shop My Coffee Shop
+/dbio:new-blog Tech Insights
+/dbio:new-landing Product Launch
+/dbio:new-wiki Product Docs
+/dbio:find-template restaurant with menu and reservation
+```
+
+Or just talk to Claude:
+
+> "Tạo cho tôi 1 trang bán hàng cho quán cafe"  
+> "Build me a tech blog with categories"  
+> "I want a docs site for my API"
+
+Skills auto-activate based on context — no command needed.
+
+## What it builds
+
+- **Bio link / landing pages** — single-page personal sites, link-in-bio, CV
+- **E-commerce stores** — products, cart, checkout, coupons
+- **Blogs & news** — multi-page content sites with categories
+- **Wikis & docs** — hierarchical knowledge bases
+- **Multi-page sites** — portfolios, catalogs, corporate sites
+- **Verticals** (via templates) — restaurants, events, courses, services
+
+## Commands
+
+| Command | Purpose |
+|---|---|
+| `/dbio:find-template <description>` | Find a template by use case (semantic) |
+| `/dbio:new-store [name]` | Create blank store (interactive) |
+| `/dbio:new-shop [name]` | Create ecommerce store |
+| `/dbio:new-landing [name]` | Create landing page |
+| `/dbio:new-blog [name]` | Create blog/news site |
+| `/dbio:new-wiki [name]` | Create wiki/docs site |
+| `/dbio:new-bio [name]` | Add a page to active store |
+| `/dbio:ecom-add-product <desc>` | Create a product with AI image |
+| `/dbio:publish` | Publish active store, show URL |
+| `/dbio:whoami` | Show session, platform, quota |
+
+## Skills (auto-activated)
+
+### Cross-cutting
+- `template-search` — try templates first whenever building anything
+- `store-create` — build from scratch when no template fits
+- `content-write` — context-aware copy (industry, locale)
+- `theme-customize` — colors, typography, design tokens
+- `publish-deploy` — publish + custom domain
+- `platform-switch` — switch platform endpoint
+
+### Vertical-specific
+- `bio-design` — bio link / personal landing
+- `landing-cta` — landing page conversion optimization
+- `ecom-setup` — full e-commerce setup
+- `ecom-product` — add products with images/variants
+- `ecom-checkout` — coupons, payment, order management
+- `blog-setup` — blog/news site structure
+- `blog-write` — SEO-optimized post drafting
+- `wiki-structure` — hierarchical docs/KB
+
+## Configuration
+
+| Env var | Purpose | Default |
+|---|---|---|
+| `DBIO_API_KEY` | API key (required) | — |
+| `DBIO_MCP_URL` | MCP server endpoint | `https://mcp.dbio.ai/mcp` |
+
+## Troubleshooting
+
+- **Unauthorized errors** — API key invalid/expired. Get a new one at the dashboard.
+- **Tools not available** — restart Claude Code after setting env vars. Need v2.0+.
+- **Wrong platform** — check `DBIO_MCP_URL`. Set explicitly for dbio.vn or self-hosted.
+- **Quota exceeded** — run `/dbio:whoami` to see usage. Upgrade plan at dashboard.
 
 ## Links
 
@@ -65,3 +118,7 @@ Apache 2.0 — see [LICENSE](./LICENSE).
 - Docs: https://docs.dbio.ai
 - Support: support@dbio.ai
 - Issues: https://github.com/dbio-ai/claude-plugins/issues
+
+## License
+
+Apache 2.0

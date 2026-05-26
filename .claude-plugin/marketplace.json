@@ -11,7 +11,7 @@
   "plugins": [
     {
       "name": "dbio",
-      "source": "./plugins/dbio",
+      "source": "./",
       "description": "Build websites, bio pages, and online stores on Dbio with AI — single-page, multi-page, e-commerce, and wiki sites with built-in templates, themes, and publishing.",
       "version": "0.2.0",
       "homepage": "https://dbio.ai",
