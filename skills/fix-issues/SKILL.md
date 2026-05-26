@@ -62,19 +62,18 @@ This is a known bug: R2 fast-path cache may serve unrendered Mustache.
 
 ```
 1. Inspect section content via page_get → find image fields
-2. Check field name for variant:
-   → hero variant `split` / `product` → field is `image` or `image_url`
-   → hero variant `restaurant` / `destination` / `tour` / `centered` → field is `background_image`
-   → if user used wrong field name, image won't show
-
+2. Check field name expected by the section:
+   → hero registry field is `hero_media_id` (auto-resolves to hero_image.url)
+   → banner: `banner_media_id` (single) or `items[].media_id` (multiple)
+   → cta: `bg_media_id`
+   → For custom variant template_html: whatever field the template uses
+   → Call section_catalog({ section_type }) to see the actual expected fields
 3. Verify the URL works:
    → Must be Dbio CDN: s3.dbio.ai/... or cdn-p*.dbio.ai/...
    → If external URL: re-upload via media_import_url({ url, ... }) → use returned URL
-
 4. Image deleted from R2?
    → media_list() to confirm still exists
    → If gone: re-generate via media_generate_image OR upload new
-
 5. Wrong media_id?
    → product_image / section content references media_id
    → media_list({ ids: [<id>] }) to verify exists
@@ -93,16 +92,15 @@ STRIPPED by compiler:
   - container queries
 
 WORKAROUND:
-  Use inline `style="..."` attribute in template_html, OR
-  Use a registry variant that has these layouts built in
+  Use inline `style="..."` attribute in template_html — inline styles are not stripped.
 ```
 
 Diagnostic:
 
 ```
-1. page_get → find broken section, inspect template_html
-2. If custom template_html with stripped CSS → switch to a registry variant via section_update({ variant: "<correct one>" })
-3. If wrong variant for use case → section_catalog({ section_type }) to find better variant
+1. page_get → find broken section, inspect template_html + template_css
+2. If template_css uses any stripped property → move to inline style="" or rewrite without it
+3. Call section_catalog({ section_type }) to confirm available variants (most sections only have `custom`)
 ```
 
 ## Issue: "Menu items 404"
@@ -145,13 +143,12 @@ Cause: menu items missing `type: 'link'`.
 ```
 1. Open URL in browser DevTools → mobile viewport
 2. Common causes:
-   → Custom template_html with grid/flex-wrap stripped → use registry variant
-   → Hero variant chosen for desktop only → switch to mobile-friendly variant
+   → template_css uses stripped properties (flex-wrap/grid/clamp/max-width) → move to inline style=""
+   → template_html assumes wide viewport (fixed widths, large fonts) → use rem/% or media queries inline
    → Long unbreakable text → not Dbio's fault, ask user to shorten
    → Image too large → use media_edit_image to resize, OR add ?v=1 marker for pre-baked variants
-
-3. Sticky CTA hiding content on mobile:
-   → Some variants have floating CTA; remove or change variant
+3. Sticky / floating elements hiding content on mobile:
+   → Inspect template_html, adjust CSS for the breakpoint
 ```
 
 ## Issue: "Custom domain không work"
@@ -214,7 +211,7 @@ Cause: menu items missing `type: 'link'`.
 
 - ❌ Don't try `cache_clear` — dashboard-only
 - ❌ Don't blame user for known bugs (Mustache R2 cache, mobile layout strip) — acknowledge it
-- ❌ Don't suggest custom CSS for layout — use registry variants
+- ❌ Don't put stripped CSS properties in template_css — use inline `style=""` instead
 - ❌ Don't auto-delete/restore without confirming with user
 - ❌ Don't claim to fix things you can't (no `cache_clear`, no SSL force-renew via MCP)
 

@@ -12,4 +12,4 @@ Use the `store-create` skill:
 3. Suggest global_code (kebab-case from name)
 4. Confirm with user
 5. Call `store_create` then `store_select`
-6. Suggest the next skill based on store type (bio-design or ecommerce-setup)
+6. Suggest the next skill based on store type (bio-design / ecom-setup / blog-setup / wiki-structure)
